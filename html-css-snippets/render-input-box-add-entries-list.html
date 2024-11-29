@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Box with React</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const InputBox = () => {
+            // State to hold the input value
+            const [inputValue, setInputValue] = useState("");
+            // State to store all entries
+            const [entries, setEntries] = useState([]);
+
+            // Handle input change
+            const handleChange = (event) => {
+                setInputValue(event.target.value);
+            };
+
+            // Add entry to the list
+            const handleAddEntry = () => {
+                if (inputValue.trim() !== "") {
+                    setEntries((prevEntries) => [...prevEntries, inputValue]);
+                    setInputValue(""); // Clear input after adding entry
+                }
+            };
+
+            return (
+                <div>
+                    <h2>Input Box with Stored Entries</h2>
+                    <input
+                        type="text"
+                        value={inputValue}
+                        onChange={handleChange}
+                        placeholder="Type something..."
+                    />
+                    <button onClick={handleAddEntry}>Add Entry</button>
+                    
+                    <div>
+                        <h3>Stored Entries:</h3>
+                        <ul>
+                            {entries.map((entry, index) => (
+                                <li key={index}>{entry}</li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+            );
+        };
+
+        // Render the InputBox component into the DOM
+        ReactDOM.render(<InputBox />, document.getElementById('root'));
+    </script>
+</body>
+</html>

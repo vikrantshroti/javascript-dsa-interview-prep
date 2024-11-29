@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debounced Input with React</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+<body>
+    <div id="root"></div>
+
+    <!-- Your React component will go here -->
+    <script type="text/babel">
+        const { useState, useRef } = React;
+
+        const DebouncedInput = () => {
+            const [value, setValue] = useState("");
+            const [debouncedValue, setDebouncedValue] = useState("");
+            const debounceRef = useRef(null);
+
+            const handleChange = (event) => {
+                const inputValue = event.target.value;
+                setValue(inputValue);
+
+                // Clear the previous timeout
+                if (debounceRef.current) {
+                    clearTimeout(debounceRef.current);
+                }
+
+                // Set a new timeout
+                debounceRef.current = setTimeout(() => {
+                    setDebouncedValue(inputValue);
+                }, 1000); // 1000ms debounce time
+            };
+
+            return (
+                <div>
+                    <input
+                        type="text"
+                        value={value}
+                        onChange={handleChange}
+                        placeholder="Type something..."
+                    />
+                    <p>Debounced Value: {debouncedValue}</p>
+                </div>
+            );
+        };
+
+        // Render the component to the DOM
+        ReactDOM.render(<DebouncedInput />, document.getElementById('root'));
+    </script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Board</title>
+    <style>
+        #chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 50px); /* 8 columns with 50px width */
+            grid-template-rows: repeat(8, 50px);    /* 8 rows with 50px height */
+            width: 400px;
+            height: 400px;
+            border: 2px solid #000;
+        }
+        .square {
+            width: 50px;
+            height: 50px;
+        }
+        .black {
+            background-color: #000;
+        }
+        .white {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div id="chessboard"></div>
+
+    <script>
+        // JavaScript to create the chessboard
+        const chessboard = document.getElementById('chessboard');
+
+        for (let row = 0; row < 8; row++) {
+            for (let col = 0; col < 8; col++) {
+                const square = document.createElement('div');
+                square.classList.add('square');
+                // Add black or white class based on position
+                if ((row + col) % 2 === 0) {
+                    square.classList.add('white');
+                } else {
+                    square.classList.add('black');
+                }
+                chessboard.appendChild(square);
+            }
+        }
+    </script>
+</body>
+</html>
