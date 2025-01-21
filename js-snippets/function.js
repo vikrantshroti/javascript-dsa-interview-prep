@@ -1,3 +1,11 @@
+// function getName() {
+//   return;
+//   ("name");
+// }
+// console.log(getName());
+
+/**************************************************************************/
+
 // function makeAdder(x) {
 //     return function(y) {
 //         return x + y;
@@ -30,3 +38,5 @@
 // console.log(counter.value());
 // counter.decOne();
 // console.log(counter.value());
+
+/**************************************************************************/
