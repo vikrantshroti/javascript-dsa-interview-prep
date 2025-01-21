@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid</title>
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
+
+.box {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "sidebar article aside"
+    "footer footer footer";
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  width: 80%;
+  height: 80%;
+  background-color: white;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.box.header {
+  grid-area: header;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box.sidebar {
+  grid-area: sidebar;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box.article {
+  grid-area: article;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box.aside {
+  grid-area: aside;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box.footer {
+  grid-area: footer;
+  background-color: #add8e6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+    </style>
+
+
+</head>
+<body>
+    <div class="box">
+        <div class="box header">header</div>
+        <div class="box sidebar">sidebar</div>
+        <div class="box aside">aside</div>
+        <div class="box article">article</div>
+        <div class="box footer">footer</div>
+    </div>
+    
+
+</body>
+</html>

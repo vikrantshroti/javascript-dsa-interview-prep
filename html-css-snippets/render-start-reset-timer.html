@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Reset Timer</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const TimerComponent = () => {
+            const defaultValueForCountDown = 10;
+            const [start, setStart] = useState(false);
+            const [time, setTime] = useState(defaultValueForCountDown);
+            const timerRef = useRef(null);
+            useEffect(() => {
+                if (start) {
+                    timerRef.current = setInterval(() => {
+                        setTime(prevTime => {
+                            if(prevTime <=1){
+                                clearInterval(timerRef.current);
+                                setStart(false);
+                                return 0;
+                            }
+                            return prevTime - 1;
+                        }
+                    );
+                    }, 1000);
+                } else {
+                    clearInterval(timerRef.current);
+                }
+                return () => {
+                    clearInterval(timerRef.current);
+                };
+            }, [start]);
+
+            const handleStart = () => {
+                setStart(true);
+            };
+            const handleReset = () => {
+                setStart(false);
+                setTime(defaultValueForCountDown);
+            };
+            
+
+            return (
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
+                    <div>
+                    <button onClick={handleStart}>Start</button>
+                    <button onClick={handleReset}>Reset</button>
+                    </div>
+                    <div>{time}</div>
+                </div>
+            );
+        };
+
+        // Render the component to the DOM
+        ReactDOM.render(<TimerComponent />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>

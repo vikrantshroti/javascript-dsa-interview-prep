@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Render Product Review</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useReducer } = React;
+
+        const initialState = {
+            reviews: [
+                {
+                    id: 1,
+                    title: "title1",
+                    content: "content1",
+                    rating: 1,
+                    date: "10/10/24",
+                    upvotes: 1000,
+                },
+                {
+                    id: 2,
+                    title: "title2",
+                    content: "content2",
+                    rating: 5,
+                    date: "8/8/2024",
+                    upvotes: 900,
+                },
+                {
+                    id: 3,
+                    title: "title3",
+                    content: "content3",
+                    rating: 4,
+                    date: "6/6/2024",
+                    upvotes: 1100,
+                },
+                {
+                    id: 4,
+                    title: "title4",
+                    content: "content4",
+                    rating: 2,
+                    date: "4/4/2024",
+                    upvotes: 400,
+                },
+                {
+                    id: 5,
+                    title: "title5",
+                    content: "content5",
+                    rating: 5,
+                    date: "5/5/2024",
+                    upvotes: 1500,
+                },
+            ],
+            searchQuery: "",
+            sortOption: "date",
+        };
+
+        function reducer(state, action) {
+            if (action.type === "SET_SEARCH_QUERY") {
+                return {
+                    ...state,
+                    searchQuery: action.payload,
+                };
+            } else if (action.type === "SET_SEARCH_SORT_OPTION") {
+                return {
+                    ...state,
+                    sortOption: action.payload,
+                };
+            } else {
+                return 0;
+            }
+        }
+
+        const Home = () => {
+            const [state, dispatch] = useReducer(reducer, initialState);
+
+            const filteredReviews = state.reviews
+                .filter((review) => review.title.includes(state.searchQuery.toLowerCase()))
+                .sort((a, b) => {
+                    if (state.sortOption === "date") {
+                        return new Date(b.date) - new Date(a.date);
+                    } else if (state.sortOption === "rating") {
+                        return b.rating - a.rating;
+                    } else if (state.sortOption === "upvotes") {
+                        return b.upvotes - a.upvotes;
+                    }
+                    return 0;
+                });
+
+            return (
+                <div
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        flexDirection: "column",
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <input
+                            type="text"
+                            placeholder="Enter your search query"
+                            value={state.searchQuery}
+                            onChange={(e) => {
+                                dispatch({ type: "SET_SEARCH_QUERY", payload: e.target.value });
+                            }}
+                        />
+                        <select
+                            value={state.sortOption}
+                            onChange={(e) => {
+                                dispatch({
+                                    type: "SET_SEARCH_SORT_OPTION",
+                                    payload: e.target.value,
+                                });
+                            }}
+                        >
+                            <option value="date">Sort by Date</option>
+                            <option value="rating">Sort by Rating</option>
+                            <option value="upvotes">Sort by Upvotes</option>
+                        </select>
+                    </div>
+                    <ul>
+                        {filteredReviews.map((review) => (
+                            <li key={review.id}>
+                                <h3>Title: {review.title}</h3>
+                                <p>Review: {review.content}</p>
+                                <p>Rating: {review.rating}/5</p>
+                                <p>Date: {review.date}</p>
+                                <p>UpVotes: {review.upvotes}</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+
+        // Render the component to the DOM
+        ReactDOM.render(<Home />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>

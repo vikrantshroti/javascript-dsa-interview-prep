@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo List useReducer</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useReducer } = React;
+
+        const initialState = {
+            draft: "",
+            sortOptions: "all",
+            todos: []
+        }
+
+        function reducer(state, action) {
+            switch (action.type) {
+                case "DRAFT_NOTE": return {
+                    ...state,
+                    draft: action.payload
+                }
+                case "ADD_NOTE": return {
+                    ...state,
+                    todos: [{ id: state.todos.length, text: state.draft, status: "pending" }, ...state.todos],
+                    draft: "",
+                };
+                case "SET_SORT_OPTIONS": return {
+                    ...state,
+                    sortOptions: action.payload
+                }
+            }
+        }
+
+        const ToDo = () => {
+            const [state, dispatch] = useReducer(reducer, initialState);
+            console.log("state", state);
+            const filteredTodos = state.todos.filter(item => {
+                if (state.sortOptions === "all") return true;
+                if (state.sortOptions === "completed") return item.status === "completed";
+                if (state.sortOptions === "pending") return item.status === "pending";
+            });
+            return <div>
+                <input value={state.draft} onChange={(e) => dispatch({ type: "DRAFT_NOTE", payload: e.target.value })} />
+                <button onClick={() => dispatch({ type: "ADD_NOTE" })}>Add</button>
+                <select value={state.sortOptions} onChange={(e) => dispatch({ type: "SET_SORT_OPTIONS", payload: e.target.value })}>
+                    <option value="all">All</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                </select>
+                <ul>
+                    {filteredTodos.map(item =>
+                        <li key={item.id}>{item.text} - {item.status}</li>)}
+                </ul>
+            </div>
+        }
+        // Render the component to the DOM
+        ReactDOM.render(<ToDo />, document.getElementById('root'));
+    </script>
+
+</body>
+
+</html>
