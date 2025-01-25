@@ -71,3 +71,5 @@
 //   printArray(1, 2, 3, 4); // undefined
 
 /**************************************************************************/
+
+// TODO add slice and splice questions;
