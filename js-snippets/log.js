@@ -10,9 +10,9 @@ function func() {
   };
 }
 
-let func1 = func();
+let func11 = func();
 
-console.log(func1(1, 2)); // 3
+console.log(func11(1, 2)); // 3
 
 console.log(x); // Undefined
 
@@ -133,10 +133,10 @@ console.log(dwayne[daniel]);
 
 /**************************************************************************/
 
-let i;
-for (i = 0; i < 3; i++) {
+let i1;
+for (i1 = 0; i1 < 3; i1++) {
   const log = () => {
-    console.log(i);
+    console.log(i1);
   };
   setTimeout(log, 100);
 }
@@ -194,4 +194,117 @@ for (var i = 1; i <= 5; i++) {
 }
 // 6 6 6 6 6
 
+/**************************************************************************/
+x = 5;
+var x;
+(function fun() {
+  {
+    let x = 1;
+    x++;
+    console.log(x);
+  }
+  console.log(x);
+})();
+// 2,5
+/**************************************************************************/
+setTimeout(() => {
+  console.log("Hi");
+}, 0);
+console.log("Hello");
+// Hello Hi
+/**************************************************************************/
+var x = 5;
+x = 0;
+setTimeout(() => {
+  console.log(x);
+});
+console.log("Hello");
+x = x + 1;
+// Hello 1
+/**************************************************************************/
+fun2();
+console.log(x);
+console.log(y);
+fun1();
+const fun1 = () => {
+  console.log("fun1");
+};
+function fun2() {
+  console.log("fun2");
+}
+var x = 5;
+let y = 7;
+// fun2 and reference error (var is hoisted, let is not)
+/**************************************************************************/
+function compute() {
+  const condition = true;
+  if (condition) {
+    let a = false;
+    let b = false;
+  }
+  return {
+    a: a || null,
+    b: b || null,
+  };
+}
+var r = compute();
+// What do you think would be the output?
+console.log(r);
+// reference error a is not defined
+/**************************************************************************/
+function Person(name) {
+  this.name = name;
+  var person = {
+    name: "name1",
+  };
+  function person() {
+    return {
+      name: "name2",
+    };
+  }
+  return person;
+}
+var names = new Person("name3");
+console.log(names);
+// {name: "name1"}
+/**************************************************************************/
+function go(n) {
+  // n here is defined!
+  console.log(n); // Object {a: [1,2,3]}
+  for (let n of n.a) {
+    // ReferenceError
+    console.log(n);
+  }
+}
+go({ a: [1, 2, 3] });
+// ReferenceError: Cannot access 'n' before initialization
+/**************************************************************************/
+var name = "name1";
+function print(name) {
+  console.log(name); // name = name1
+  var name = "name2";
+  console.log(name); // name = name2
+}
+print(name);
+// name1 name2
+/**************************************************************************/
+function sayName() {
+  setTimeout(() => {
+    console.log(this.name);
+  }, 1000);
+}
+sayName.call({
+  name: "name",
+});
+// name
+/**************************************************************************/
+function sayName() {
+  setTimeout(function () {
+    console.log(this.school);
+  }, 1000);
+}
+sayName.call({
+  school: "JMIT",
+});
+// undefined
 /**************************************************************************/

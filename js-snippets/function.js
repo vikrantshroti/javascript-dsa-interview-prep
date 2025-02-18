@@ -40,3 +40,23 @@
 // console.log(counter.value());
 
 /**************************************************************************/
+
+// Q: what can we change without modifying if condition so that it prints "Hello World"?
+// a = { num: 1 };
+// if (a == 1 && a == 2 && a == 3) {
+//  console.log("Hello World");
+// }
+
+// Answer:
+// a = {
+//   num: 1,
+//   valueOf: function () {
+//     return this.num++;
+//   },
+// };
+
+// if (a == 1 && a == 2 && a == 3) {
+//   console.log("Hello World");
+// }
+
+/**************************************************************************/
