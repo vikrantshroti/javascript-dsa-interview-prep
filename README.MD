@@ -2,11 +2,11 @@
 
 ## 1. DSA Interview questions
 
-This folder contains problem statements asked in coding test or virtual interview involving test cases, space time complexity, constraints, etc.
+This folder contains problem statements asked in coding test or virtual interview involving test cases, space time complexity, constraints, etc. Time provided to solve these questions vary from 20-60 minutes.
 
-## 2. HTML CSS Snippets
+## 2. HTML DOM CSS Snippets
 
-This folder contains HTML / CSS related problem statements asked in coding test or virtual interviews.
+This folder contains HTML / DOM / CSS related problem statements asked in coding test or virtual interviews.
 
 ## 3. JS Snippets
 
