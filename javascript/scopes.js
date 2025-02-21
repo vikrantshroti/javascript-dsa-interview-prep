@@ -8,10 +8,10 @@ abc();
 
 /**************************************************************************/
 
-console.log(a);
-console.log(b);
-var a = "value";
-const b = 3.14;
+console.log(a1);
+console.log(b1);
+var a1 = "value";
+const b1 = 3.14;
 (function () {
   console.log(1);
   setTimeout(function () {
@@ -22,21 +22,21 @@ const b = 3.14;
   }, 0);
   console.log(4);
 })();
-function abc() {
-  let a = (b = 0);
-  a++;
-  return a;
+function abc1() {
+  let a1 = (b1 = 0);
+  a1++;
+  return a1;
 }
-abc();
-console.log(typeof a);
-console.log(typeof b);
+abc1();
+console.log(typeof a1);
+console.log(typeof b1);
 
 /**************************************************************************/
 
-console.log(a);
-console.log(b);
-var a = "value";
-const b = 3.14;
+console.log(a2);
+console.log(b2);
+var a2 = "value";
+const b2 = 3.14;
 (function () {
   console.log(1);
   setTimeout(function () {
@@ -47,13 +47,13 @@ const b = 3.14;
   }, 0);
   console.log(4);
 })();
-function abc() {
-  let a = (b = 0);
-  a++;
-  return a;
+function abc2() {
+  let a2 = (b2 = 0);
+  a2++;
+  return a2;
 }
-abc();
-console.log(typeof a);
-console.log(typeof b);
+abc2();
+console.log(typeof a2);
+console.log(typeof b2);
 
 /**************************************************************************/

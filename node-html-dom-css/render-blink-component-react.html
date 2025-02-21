@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debounced Input with React</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <!-- Your React component will go here -->
+    <script type="text/babel">
+        function Blink(props) {
+            const [visible, setVisible] = React.useState(true);
+
+            React.useEffect(() => {
+                const interval = setInterval(() => {
+                    setVisible((prev) => !prev);
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            return <span style={{ visibility: visible ? "visible" : "hidden" }}>{props.children}</span>;
+        }
+        function App() {
+            return (
+                <Blink>React is awesome!</Blink>
+            );
+        }
+        // Render the component to the DOM
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>
