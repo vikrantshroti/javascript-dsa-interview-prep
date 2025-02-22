@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Search API</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+    <!-- include local configuration files -->
+    <script src="../config.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #ff0000;
+            margin-bottom: 20px;
+        }
+
+        .loading-indicator {
+            color: #ff9800;
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            max-width: 600px;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            border-color: #ff0000;
+            outline: none;
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-container {
+                padding: 15px;
+            }
+
+            input {
+                width: 100%;
+                font-size: 14px;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 10px 15px;
+            }
+        }
+
+        button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #cc0000;
+        }
+
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+        }
+
+        .search-icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .search-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .search-button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .search-button:hover {
+            background-color: #cc0000;
+        }
+
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .video-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .video-list {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useCallback } = React;
+        const BASE_URL = "https://www.googleapis.com/youtube/v3/search";
+        // REACT_APP_YOUTUBE_API_KEY is defined in the config.js file
+        // const REACT_APP_YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY";
+
+        const Button = ({ onClick, children }) => (
+            <button onClick={onClick} className="button">
+                {children}
+            </button>
+        );
+
+        const SearchBar = ({ query, setQuery, fetchVideos }) => (
+            <form
+                className="search-bar"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    fetchVideos(query);
+                }}
+            >
+                <div className="search-input-container">
+                    <span className="search-icon">🔍</span>
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search for videos..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                    />
+                </div>
+                <button type="submit" className="search-button">
+                    Search
+                </button>
+            </form>
+        );
+
+        const VideoList = ({ videos }) => {
+            return (
+                <div className="video-list">
+                    {videos.map((video) => (
+                        <div key={video.id.videoId} className="video-card">
+                            <img
+                                src={video.snippet.thumbnails.medium.url}
+                                alt={video.snippet.title}
+                                className="video-thumbnail"
+                            />
+                            <p className="video-title">{video.snippet.title}</p>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        const useYouTubeSearch = () => {
+            const [query, setQuery] = useState("");
+            const [videos, setVideos] = useState([]);
+            const [nextPageToken, setNextPageToken] = useState("");
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const fetchVideos = useCallback(async (searchQuery, pageToken = "") => {
+                if (!searchQuery) return;
+                setLoading(true);
+                setError(null);
+                try {
+                    const response = await fetch(
+                        `${BASE_URL}?part=snippet&maxResults=10&q=${searchQuery}&type=video&key=${REACT_APP_YOUTUBE_API_KEY}&pageToken=${pageToken}`
+                    );
+                    if (!response.ok) throw new Error("Failed to fetch videos");
+                    const data = await response.json();
+                    setVideos((prev) => (pageToken ? [...prev, ...data.items] : data.items));
+                    setNextPageToken(data.nextPageToken || "");
+                } catch (error) {
+                    setError(error.message);
+                } finally {
+                    setLoading(false);
+                }
+            }, []);
+
+            const loadMore = () => {
+                if (nextPageToken) fetchVideos(query, nextPageToken);
+            };
+
+            return {
+                query,
+                setQuery,
+                videos,
+                fetchVideos,
+                loadMore,
+                loading,
+                error,
+                nextPageToken,
+            };
+        };
+        const App = () => {
+            const {
+                query,
+                setQuery,
+                videos,
+                fetchVideos,
+                loadMore,
+                loading,
+                error,
+                nextPageToken,
+            } = useYouTubeSearch();
+
+            return (
+                <div className="app-container">
+                    <h1>YouTube Video Search</h1>
+                    <SearchBar query={query} setQuery={setQuery} fetchVideos={fetchVideos} />
+                    {loading && <p className="loading-indicator">Loading...</p>}
+                    {error && <p className="error-message">Error fetching videos: {error}</p>}
+                    <VideoList videos={videos} />
+                    {nextPageToken && !loading && (
+                        <button onClick={loadMore}>Load More</button>
+                    )}
+                </div>
+            );
+        }
+        // Render the InputBox component into the DOM
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>
