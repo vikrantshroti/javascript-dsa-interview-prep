@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake and Ladder</title>
+    <!-- Include React and ReactDOM from a CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script> <!-- For JSX support -->
+    <!-- include local configuration files -->
+    <!-- <script src="../config.js"></script> -->
+    <style>
+        .App {
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        table {
+            border: 5px solid black;
+            display: inline-flex;
+            flex-direction: column-reverse;
+        }
+
+        table tr {
+            display: flex;
+        }
+
+        table tr:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        table tr th {
+            width: 40px;
+            height: 40px;
+            border: 1px solid black;
+            /* border-radius: 50%; */
+            margin: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert {
+            background: red;
+        }
+
+        .success {
+            background: green;
+        }
+
+        .destination {
+            background: wheat;
+        }
+
+        .pulser {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rebeccapurple;
+            position: relative;
+        }
+
+        .pulser::after {
+            animation: pulse 1000ms cubic-bezier(0.9, 0.7, 0.5, 0.9) infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.4;
+            }
+        }
+
+        .pulser::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: blueviolet;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        h3 {
+            background: greenyellow;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .info-tips {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .info-tips span {
+            width: 20px;
+            height: 20px;
+            /* background: rgb(188, 243, 105) */
+        }
+
+        .info-tips p {
+            margin-left: 2px;
+        }
+
+        #background {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+        const Board = () => {
+            const [active, setActive] = useState(1);
+            const [hit, setHit] = useState(0);
+            const [diceVal, setDiceVal] = useState(null);
+            const [reShuffle, setReShuffle] = useState(true);
+
+            const memoizedValue = useMemo(() => {
+                const arr = Array.from({ length: 100 }, (_, i) => i + 1);
+                const newArr = [];
+                while (arr.length) newArr.push(arr.splice(0, 10));
+                return newArr;
+            }, []);
+
+            const getRandomNumber = (from, to) => {
+                const min = Math.ceil(from);
+                const max = Math.floor(to);
+                return Math.floor(Math.random() * (max - min + 1) + min);
+            };
+
+            const snakeBitePoint = useMemo(() => {
+                const snakeHouse = new Map();
+                while (snakeHouse.size < 11) {
+                    const home = getRandomNumber(12, 99);
+                    const dest = getRandomNumber(2, home - 1);
+                    snakeHouse.set(home, dest);
+                }
+                return snakeHouse;
+            }, [reShuffle]);
+
+            const successPoint = useMemo(() => {
+                const greenHouse = new Map();
+                while (greenHouse.size < 7) {
+                    const home = getRandomNumber(2, 90);
+                    const dest = getRandomNumber(home, 99);
+                    greenHouse.set(home, dest);
+                }
+                return greenHouse;
+            }, [reShuffle]);
+
+            const rollTheDice = () => {
+                setHit(hit + 1);
+                const diceValue = getRandomNumber(1, 6);
+                setDiceVal(diceValue);
+                if ((active === 1 && diceValue === 1) || active > 1) {
+                    setActive(active + diceValue <= 100 ? active + diceValue : active);
+                }
+                setTimeout(() => {
+                    setDiceVal(null);
+                }, 500);
+            };
+
+            useEffect(() => {
+                setTimeout(() => {
+                    if (successPoint.get(active)) setActive(successPoint.get(active));
+                    if (snakeBitePoint.get(active)) setActive(snakeBitePoint.get(active));
+                }, 300);
+            }, [active, successPoint, snakeBitePoint]);
+
+            useEffect(() => {
+                setActive(1);
+                setHit(0);
+            }, [reShuffle]);
+
+            return <div id="background">
+                <button
+                    style={{ padding: "10px", margin: "10px" }}
+                    type="button"
+                    onClick={() => setReShuffle(!reShuffle)}
+                >
+                    Re-shuffle Snake and Ladder
+                </button>
+
+                <b>Current hits count(s): {hit}</b>
+
+                <span style={{ marginBottom: "20px" }} />
+
+                {Number(active) === 100 && (
+                    <h3>{`Congratulations! You have wont the game in ${hit}(s)`}</h3>
+                )}
+
+                <table>
+                    {memoizedValue.map((i, ind) => {
+                        return (
+                            <tr key={`tr-${ind}`}>
+                                {i.map((ij) => {
+                                    const sEntry = successPoint.get(ij);
+                                    const bEntry = snakeBitePoint.get(ij);
+                                    return (
+                                        <th
+                                            key={`th-${ij}`}
+                                            className={`${sEntry && "success"} ${bEntry && "alert"} ${ij === Number(active) ? "pulser" : ""
+                                                }`}
+                                        >
+                                            {ij}
+
+                                            {(sEntry || bEntry) && (
+                                                <sub
+                                                    style={{
+                                                        background: "wheat",
+                                                        width: "15px",
+                                                        height: "15px",
+                                                        // borderRadius: "50%",
+                                                        fontSize: "10px",
+                                                        border: "1px solid",
+                                                        marginBottom: "15px",
+                                                    }}
+                                                >
+                                                    {sEntry || bEntry}
+                                                </sub>
+                                            )}
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        );
+                    })}
+                </table>
+                {Number(active) === 100 ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setActive(1);
+                            setHit(0);
+                        }}
+                    >
+                        Restart
+                    </button>
+                ) : (
+                    <button
+                        style={{
+                            padding: "10px",
+                            margin: "10px",
+                            height: "100px",
+                            width: "100px",
+                            background: "rgb(188, 243, 105)",
+                            borderRadius: "50%",
+                            fontSize: diceVal ? "12vw" : "15px",
+                        }}
+                        type="button"
+                        onClick={(e) => (diceVal ? e.preventDefault() : rollTheDice())}
+                    >
+                        {diceVal ||
+                            // <img
+                            //   src={
+                            //     "https://play-lh.googleusercontent.com/WHS_1xzDH8Eup1ukJPSRRQOMPMwG0hZWwHxomiXNYH_oGa72LniTPA8djUJuUoGQBTI"
+                            //   }
+                            //   alt="Roll The dice"
+                            // />
+                            "Roll The dice"}
+                    </button>
+                )}
+            </div>
+        }
+        const App = () => {
+            return (
+                <div className="App">
+                    <h1>Let's play Snakes and Ladders</h1>
+                    <section style={{ display: "flex", flexDirection: "row" }}>
+                        <div className="info-tips">
+                            <span className="alert"></span>
+                            <p>Snakes</p>
+                        </div>
+                        <div className="info-tips">
+                            <span className="success"></span>
+                            <p>Ladder</p>
+                        </div>
+                        <div className="info-tips">
+                            <span className="pulser"></span>
+                            <p>Player</p>
+                        </div>
+                        <div className="info-tips">
+                            <span className="destination"></span>
+                            <p>Destination</p>
+                        </div>
+                    </section>
+                    <Board />
+                </div>
+            )
+        }
+        // Render the InputBox component into the DOM
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+
+</html>
