@@ -250,3 +250,11 @@ function findPairs(arr, target) {
 
 console.log(findPairs([2, 4, 3, 5, 7, 8, 9], 10)); // [[7, 3], [8, 2], [9, 1]]
 /**************************************************************************/
+
+// find the maximum number from the array (numbers can be negative)
+
+let nums = [4, 2, [6, 3], [1, [9, 8]], 5];
+let max = Math.max(...nums.flat(Infinity));
+console.log("max", max);
+
+/**************************************************************************/
