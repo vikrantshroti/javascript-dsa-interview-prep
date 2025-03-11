@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Form Validation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none;
+        }
+
+        .input-error {
+            border: 2px solid red;
+        }
+
+        ul {
+            margin-top: 20px;
+            padding: 0;
+        }
+
+        li {
+            list-style: none;
+            background: #f0f0f0;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>User Registration</h2>
+
+    <label>First Name:</label>
+    <input type="text" id="firstName">
+    <div id="firstNameError" class="error">Invalid Input</div>
+
+    <br><br>
+
+    <label>Last Name:</label>
+    <input type="text" id="lastName">
+    <div id="lastNameError" class="error">Invalid Input</div>
+
+    <br><br>
+
+    <button onclick="handleSubmit()">Submit</button>
+
+    <ul id="userList"></ul>
+
+    <script>
+        let users = new Set(); // Store unique users
+
+        function handleSubmit() {
+            let firstName = document.getElementById("firstName").value.trim();
+            let lastName = document.getElementById("lastName").value.trim();
+            let fullName = firstName + " " + lastName;
+
+            let firstNameError = document.getElementById("firstNameError");
+            let lastNameError = document.getElementById("lastNameError");
+
+            let firstNameInput = document.getElementById("firstName");
+            let lastNameInput = document.getElementById("lastName");
+
+            let isValid = true;
+
+            // Validate First Name
+            if (firstName === "") {
+                firstNameError.style.display = "block";
+                firstNameInput.classList.add("input-error");
+                isValid = false;
+            } else {
+                firstNameError.style.display = "none";
+                firstNameInput.classList.remove("input-error");
+            }
+
+            // Validate Last Name
+            if (lastName === "") {
+                lastNameError.style.display = "block";
+                lastNameInput.classList.add("input-error");
+                isValid = false;
+            } else {
+                lastNameError.style.display = "none";
+                lastNameInput.classList.remove("input-error");
+            }
+
+            if (!isValid) return; // Stop execution if inputs are invalid
+
+            // Check if user already exists
+            if (users.has(fullName)) {
+                alert("User already exists");
+                return;
+            }
+
+            // Add user to the list
+            users.add(fullName);
+            let userList = document.getElementById("userList");
+            let li = document.createElement("li");
+            li.textContent = fullName;
+            userList.appendChild(li);
+
+            // Clear input fields
+            document.getElementById("firstName").value = "";
+            document.getElementById("lastName").value = "";
+        }
+    </script>
+
+</body>
+
+</html>
